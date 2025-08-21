@@ -5,8 +5,8 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       vars:
-        XCODE_WORKSPACE: "your_workspace_name.xcworkspace"
-        XCODE_SCHEME: "your_workspace_name"
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
       xcode: 13.0
       cocoapods: default
     scripts:
