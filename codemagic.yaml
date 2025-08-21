@@ -1,13 +1,32 @@
 workflows:
-  ios-simulator-test:
-    name: iOS Simulator Test
-    environment:
-      flutter: stable
-      xcode: latest
-    scripts:
-      - flutter packages pub get
-      - flutter analyze
-      - flutter test
-      - flutter build ios --simulator --debug --no-codesign
-    artifacts:
-      - build/ios/iphonesimulator/*.app
+    ios-simulator-test:
+      name: iOS Simulator Test
+      environment:
+        flutter: stable
+        xcode: latest
+        vars:
+          APPETIZE_API_TOKEN: "あなたのAppetize_APIトークン"  # Appetize.ioのAPIトークン
+          APPETIZE_PUBLIC_KEY: "あなたのAppetize公開キー"  # Appetize.ioアプリの公開キー
+      scripts:
+        - name: 依存関係のインストール
+          script: flutter pub get
+        - name: 静的解析
+          script: flutter analyze
+        - name: テスト実行
+          script: flutter test
+        - name: iOSシミュレータビルド
+          script: |
+            flutter build ios --debug
+            cd ios
+            xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Debug -sdk iphonesimulator -arch arm64
+            cd ../build/ios/iphonesimulator
+            zip -r Runner.zip Runner.app
+        - name: Appetize.ioにアップロード
+          script: |
+            curl -X POST \
+              -F "file=@build/ios/iphonesimulator/Runner.zip" \
+              -F "platform=ios" \
+              -H "Authorization: Bearer $APPETIZE_API_TOKEN" \
+              https://api.appetize.io/v1/apps/$APPETIZE_PUBLIC_KEY
+      artifacts:
+              - build/ios/iphonesimulator/*.zip  # ZIPファイルをアーティファクトとして保存
