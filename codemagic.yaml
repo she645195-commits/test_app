@@ -1,32 +1,30 @@
 workflows:
-    ios-simulator-test:
-      name: iOS Simulator Test
-      environment:
-        flutter: stable
-        xcode: latest
-        vars:
-          APPETIZE_API_TOKEN: "あなたのAppetize_APIトークン"  # Appetize.ioのAPIトークン
-          APPETIZE_PUBLIC_KEY: "あなたのAppetize公開キー"  # Appetize.ioアプリの公開キー
-      scripts:
-        - name: 依存関係のインストール
-          script: flutter pub get
-        - name: 静的解析
-          script: flutter analyze
-        - name: テスト実行
-          script: flutter test
-        - name: iOSシミュレータビルド
-          script: |
-            flutter build ios --debug
-            cd ios
-            xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Debug -sdk iphonesimulator -arch arm64
-            cd ../build/ios/iphonesimulator
-            zip -r Runner.zip Runner.app
-        - name: Appetize.ioにアップロード
-          script: |
-            curl -X POST \
-              -F "file=@build/ios/iphonesimulator/Runner.zip" \
-              -F "platform=ios" \
-              -H "Authorization: Bearer $APPETIZE_API_TOKEN" \
-              https://api.appetize.io/v1/apps/$APPETIZE_PUBLIC_KEY
-      artifacts:
-              - build/ios/iphonesimulator/*.zip  # ZIPファイルをアーティファクトとして保存
+  simulator-native-ios:
+    name: iOS simulator build
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      vars:
+        XCODE_WORKSPACE: "your_workspace_name.xcworkspace"
+        XCODE_SCHEME: "your_workspace_name"
+      xcode: 13.0
+      cocoapods: default
+    scripts:
+      - name: Install CocoaPods dependencies
+        script: |
+          pod install
+      - name: Build the .app
+        script: |
+          xcodebuild build \
+            -workspace "$XCODE_WORKSPACE" \
+            -scheme "$XCODE_SCHEME" \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=18.0' \
+            -configuration Debug \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+    artifacts:
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
