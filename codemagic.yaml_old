@@ -1,0 +1,13 @@
+workflows:
+  ios-simulator-test:
+    name: iOS Simulator Test
+    environment:
+      flutter: stable
+      xcode: latest
+    scripts:
+      - flutter packages pub get
+      - flutter analyze
+      - flutter test
+      - flutter build ios --simulator --debug --no-codesign
+    artifacts:
+      - build/ios/iphonesimulator/*.app
