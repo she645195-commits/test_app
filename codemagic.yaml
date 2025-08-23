@@ -35,6 +35,11 @@ workflows:
           FLUTTER_BUILD_IOS_SKIP_CODESIGN=true flutter build ios \
             --release \
             --no-codesign
+          # 未署名の .app から .ipa を手動作成
+          mkdir -p build/ios/ipa
+          cd build/ios/Release-iphoneos
+          zip -r Runner.ipa Runner.app
+          mv Runner.ipa ../../ipa/
     artifacts:
       - /tmp/xcodebuild_logs/*.log
       - build/ios/iphonesimulator/*.app
