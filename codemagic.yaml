@@ -9,23 +9,24 @@ workflows:
         XCODE_SCHEME: "Runner"
       xcode: 15.4
       cocoapods: default
-      flutter: stable  # または特定のバージョン例: 3.22.0 (Dart 3.9.0を含む最新を確認)
+      flutter: stable  # 3.35.1 以上をサポート（最新版を使用）
     scripts:
       - name: Set up Flutter environment
         script: |
           flutter config --enable-ios
+          flutter --version
           flutter pub get
       - name: Install CocoaPods dependencies
         script: |
           cd ios
-          pod install
+          pod install --repo-update
+          pod update Flutter
       - name: Build for iOS Simulator (Debug)
         script: |
           FLUTTER_BUILD_IOS_SKIP_CODESIGN=true flutter build ios \
             --simulator \
             --no-codesign \
-            --debug \
-            --destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=18.0'
+            --debug
       - name: Build iOS Release
         script: |
           FLUTTER_BUILD_IOS_SKIP_CODESIGN=true flutter build ios \
