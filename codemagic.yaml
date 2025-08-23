@@ -15,12 +15,15 @@ workflows:
         script: |
           flutter config --enable-ios
           flutter --version
+          flutter clean  # プロジェクトをクリーンに
           flutter pub get
       - name: Install CocoaPods dependencies
         script: |
           cd ios
-          pod install --repo-update
-          pod update Flutter
+          pod deintegrate  # CocoaPods をリセット
+          pod cache clean --all  # キャッシュをクリア
+          pod install --repo-update  # 依存関係を再インストール
+          pod update Flutter  # Flutter ポッドを更新
       - name: Build for iOS Simulator (Debug)
         script: |
           FLUTTER_BUILD_IOS_SKIP_CODESIGN=true flutter build ios \

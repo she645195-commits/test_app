@@ -43,7 +43,7 @@ post_install do |installer|
 
     target.build_configurations.each do |config|
       # 最小iOSバージョンを設定
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
 
       # アーキテクチャ設定（シミュレータとデバイスの両方をサポート）
       config.build_settings['ARCHS'] = 'arm64 x86_64'
@@ -69,6 +69,6 @@ post_install do |installer|
   
   # プロジェクト全体の設定
   installer.pods_project.build_configurations.each do |config|
-    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
   end
 end
