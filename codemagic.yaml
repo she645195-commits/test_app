@@ -1,6 +1,6 @@
 workflows:
-  simulator-native-ios:
-    name: iOS simulator build
+  ios-workflow:
+    name: iOS Workflow (Simulator & Release)
     max_build_duration: 120
     instance_type: mac_mini_m2
     environment:
@@ -10,11 +10,27 @@ workflows:
       xcode: 15.4
       cocoapods: default
     scripts:
+      - name: Set up Flutter environment
+        script: |
+          flutter config --enable-ios
+          flutter pub get
       - name: Install CocoaPods dependencies
         script: |
           cd ios
           pod install
-      - name: Build the .app
+      - name: Build for iOS Simulator (Debug)
+        script: |
+          FLUTTER_BUILD_IOS_SKIP_CODESIGN=true flutter build ios \
+            --simulator \
+            --no-codesign \
+            --debug \
+            --destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=18.0'
+      - name: Build iOS Release
+        script: |
+          FLUTTER_BUILD_IOS_SKIP_CODESIGN=true flutter build ios \
+            --release \
+            --no-codesign
+      - name: Additional Xcode build (optional)
         script: |
           xcodebuild build \
             -workspace "$XCODE_WORKSPACE" \
@@ -27,5 +43,7 @@ workflows:
             CODE_SIGNING_ALLOWED=NO
     artifacts:
       - /tmp/xcodebuild_logs/*.log
+      - build/ios/iphonesimulator/*.app
+      - build/ios/ipa/*.ipa
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
