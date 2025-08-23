@@ -9,6 +9,7 @@ workflows:
         XCODE_SCHEME: "Runner"
       xcode: 15.4
       cocoapods: default
+      flutter: stable  # または特定のバージョン例: 3.22.0 (Dart 3.9.0を含む最新を確認)
     scripts:
       - name: Set up Flutter environment
         script: |
