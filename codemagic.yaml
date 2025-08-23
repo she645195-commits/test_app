@@ -39,7 +39,7 @@ workflows:
           mkdir -p build/ios/ipa
           cd build/ios/Release-iphoneos
           zip -r Runner.ipa Runner.app
-          mv Runner.ipa ../../ipa/Runner.ipa  # ファイル名を明示
+          mv Runner.ipa ../ipa/Runner.ipa  # ファイル名を明示
     artifacts:
       - /tmp/xcodebuild_logs/*.log
       - build/ios/iphonesimulator/*.app
