@@ -2,7 +2,7 @@
 # Flutterプロジェクト用のPodfile
 
 # iOSプラットフォームの最小バージョンを設定
-platform :ios, '12.0'
+platform :ios, '13.0'
 
 # CocoaPodsのインストールオプション
 install! 'cocoapods',
