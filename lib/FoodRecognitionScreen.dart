@@ -157,6 +157,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       print('Model loaded successfully');
     } catch (e) {
       print('Error loading model: $e');
+      _errorState = 'loadModel catch';
     }
   }
 
@@ -181,12 +182,15 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       // print('_labels $_labels');
     } catch (e) {
       print('Error loading labels: $e');
+      _errorState = 'loadLabels catch';
     }
   }
 
   // IDから名前を取得する関数
   List<dynamic> getlabelData(String id) {
-    if (_csvTable == null) return ['no_table'];
+    if (_csvTable == null) {
+      return ['no_table'];
+    }
     for (int i = 1; i < _csvTable!.length; i++) {
       // ヘッダーをスキップ
       if (_csvTable![i][0] == int.parse(id) + 1) {
