@@ -34,8 +34,7 @@ class _MealListScreenState extends State<MealListScreen> {
   // mealRecord の要素数（日付の数）でforループ
   // さらにそのループの中でmealRecord[0]['records']の要素数（写真の数）でforループ
 
-
-  XFile? _galleryImageImage; //　端末のファイルを取得する際に使用する
+  XFile? _galleryImageImage = null; //　端末のファイルを取得する際に使用する
   List<Map<String, dynamic>>? _showList;
 
   // スライド状態を管理するためのマップ
@@ -124,10 +123,7 @@ class _MealListScreenState extends State<MealListScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('食事の記録'),
-        backgroundColor: Colors.blue[300],
-      ),
+      appBar: AppBar(title: Text('食事の記録'), backgroundColor: Colors.blue[300]),
 
       body: GestureDetector(
         onTap: _closeAllSlides,
@@ -138,38 +134,34 @@ class _MealListScreenState extends State<MealListScreen> {
             SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  if ((() {
-                    if (_showList == null) {
-                      print('ログ: _showListはnullです。elseブロックが実行されます。');
-                      return false;
-                    }
-                    print(
-                      'ログ: _showListはnullではありません。リストの要素数: ${_showList!.length}',
-                    );
-                    return true;
-                  })())
-                    for (var meal in _showList!) ...[
-                      SizedBox(height: 2),
-                      buildDateContainer(meal['date'], size.width),
-                      SizedBox(height: 1),
-                      for (var record in meal['records']) ...[
-                        buildRecordContainer(record, size.width),
-                      ],
-                    ]
-                  else
-                    // データがないときテキストを表示する
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 50.0),
-                        child: Text(
-                          'まだ食事記録がありません。',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey[600],
+                  // 修正点：nullとemptyの両方をチェックする三項演算子を使用
+                  (_showList == null || _showList!.isEmpty)
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 50.0),
+                            child: Text(
+                              'まだ食事記録がありません。',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          child: Column(
+                            children: <Widget>[
+                              for (var meal in _showList!) ...[
+                                SizedBox(height: 2),
+                                buildDateContainer(meal['date'], size.width),
+                                SizedBox(height: 1),
+                                for (var record in meal['records']) ...[
+                                  buildRecordContainer(record, size.width),
+                                ],
+                              ],
+                            ],
                           ),
                         ),
-                      ),
-                    ),
                 ],
               ),
             ),
@@ -183,7 +175,7 @@ class _MealListScreenState extends State<MealListScreen> {
                 height: 80, // カスタム高さ
                 child: FloatingActionButton(
                   onPressed: () {
-                    print('ボタンが押されました');
+                    print('右下のボタンが押されました');
                     showModalBottomSheet(
                       context: context,
                       builder: (context) {
@@ -465,14 +457,16 @@ class _MealListScreenState extends State<MealListScreen> {
                   // 写真を選択
                   await _pickImage();
 
-                  // 選択した写真を渡して画面を切り替える
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          FoodRecognitionScreen(image: _galleryImageImage!),
-                    ),
-                  );
+                  if (_galleryImageImage != null) {
+                    // 選択した写真を渡して画面を切り替える
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            FoodRecognitionScreen(image: _galleryImageImage!),
+                      ),
+                    );
+                  }
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
