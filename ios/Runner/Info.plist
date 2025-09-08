@@ -49,5 +49,7 @@
     <string>カメラを使用して写真やビデオを撮影します</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>写真ライブラリにアクセスして画像を保存します</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>このアプリは動画撮影のためにマイクへのアクセスが必要です。</string>
 </dict>
 </plist>

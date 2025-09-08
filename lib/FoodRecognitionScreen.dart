@@ -371,10 +371,8 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
               height: 34,
               child: _errorState != null
                   ? Text(
-                      // このテキストに記録（撮影）した時間を入れる
-                      '$_errorState ',
-                      //'000kcal',
-                      style: TextStyle(fontSize: 23),
+                      _errorState!,
+                      style: TextStyle(color: Colors.red, fontSize: 18),
                     )
                   : const SizedBox.shrink(),
             ),
