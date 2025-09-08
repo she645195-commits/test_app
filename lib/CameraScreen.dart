@@ -39,6 +39,7 @@ class _CameraScreenState extends State<CameraScreen> {
       final cameras = await availableCameras();
       if (cameras.isEmpty) {
         print('カメラが利用できません');
+        _errorState = 'カメラが利用できません';
         return;
       }
       final firstCamera = cameras.first;
@@ -85,9 +86,26 @@ class _CameraScreenState extends State<CameraScreen> {
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
+          // カメラの初期化が完了したかどうかをチェック
           if (snapshot.connectionState == ConnectionState.done) {
-            return CameraPreview(_controller);
+            // エラー状態があるかどうかもチェックする
+            if (_errorState != null) {
+              // エラーがある場合はエラーメッセージを表示
+              return Center(
+                child: Text(
+                  _errorState!,
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 18,
+                  ),
+                ),
+              );
+            } else {
+              // エラーがない場合はカメラプレビューを表示
+              return CameraPreview(_controller);
+            }
           } else {
+            // 初期化中の場合はローディングインジケーターを表示
             return const Center(child: CircularProgressIndicator());
           }
         },
