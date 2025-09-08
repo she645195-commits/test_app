@@ -29,6 +29,8 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
   List<String>? _labels;
   List<List<dynamic>>? _csvTable;
 
+  String? _errorState = null;
+
   // データベースに登録するために必要な情報
   // dbHelper.insertCalories({
   //   'date': date,　←登録するタイミングの日付
@@ -65,10 +67,6 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     print("_FoodRecognitionScreenState　initState() End");
     //_testapi();
     //_awitMakeMealRecord();
-  }
-
-  Future<void> _awitMakeMealRecord() async {
-    await _makeMealRecord();
   }
 
   // 'date': '2025/08/15',
@@ -139,9 +137,11 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
         //String logName = getLabelName(_recognitions![0]['label']);
       } else {
         print("Error: _imagePath is null");
+        _errorState = "Error: _imagePath is null";
       }
     } catch (e) {
       print("Error in _loadModelAndProcess: $e");
+      _errorState = "_loadModelAndProcess catch";
     }
   }
 
@@ -207,6 +207,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
   Future<void> classifyImage(String imagePath) async {
     if (_interpreter == null) {
       print('Interpreter not initialized');
+      _errorState = 'Interpreter not initialized';
       return;
     }
 
@@ -215,6 +216,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       img.Image? image = img.decodeImage(File(imagePath).readAsBytesSync());
       if (image == null) {
         print('Failed to decode image');
+        _errorState = 'Failed to decode image';
         return;
       }
 
@@ -293,6 +295,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       print('Classification completed');
     } catch (e) {
       print('Error classifying image: $e');
+      _errorState = 'classifyImage catch';
     }
   }
 
@@ -362,6 +365,19 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
                 //child: const Icon(Icons.add, color: Colors.white, size: 40),
               ),
             ),
+
+            //　デバッグ用
+            Container(
+              height: 34,
+              child: _errorState != null
+                  ? Text(
+                      // このテキストに記録（撮影）した時間を入れる
+                      '$_errorState ',
+                      //'000kcal',
+                      style: TextStyle(fontSize: 23),
+                    )
+                  : const SizedBox.shrink(),
+            ),
           ],
         ),
       ),
@@ -382,7 +398,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => MealListScreen()),
-          (Route<dynamic> route) => false, // falseを返すことで、前の画面をすべて削除
+      (Route<dynamic> route) => false, // falseを返すことで、前の画面をすべて削除
     );
   }
 
