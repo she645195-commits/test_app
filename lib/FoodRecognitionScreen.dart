@@ -217,48 +217,28 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       return ['no_table'];
     }
 
-    if (_csvTable == null) {
-      setState(() {
-        _errorState = "getlabelData _csvTable == null)";
-      });
-      return ['no_table'];
-    }
-
     // デバッグ用ログを追加して、型を確認
     print("ID from recognition: $id, type: ${id.runtimeType}");
 
-    try {
-      final int recognitionId = int.parse(id) + 1;
-      print("Parsed recognition ID: $recognitionId");
+    // 認識結果のIDとCSVのIDを両方とも文字列として比較する
+    final String recognitionIdString = (int.parse(id) + 1).toString();
+    print("Parsed recognition ID string: $recognitionIdString");
 
-      for (int i = 1; i < _csvTable!.length; i++) {
-        final dynamic csvId = _csvTable![i][0];
-        print("CSV ID: $csvId, type: ${csvId.runtimeType}");
+    for (int i = 1; i < _csvTable!.length; i++) {
+      // CSVから読み込んだIDを文字列に変換し、前後の空白を削除
+      final String csvIdString = _csvTable![i][0].toString().trim();
+      print("CSV ID string: $csvIdString");
 
-        // ここを修正：明示的にintにキャストしてから比較する
-        if (csvId is int && csvId == recognitionId) {
-          final name = _csvTable![i][1].toString();
-          final JapaneseName = _csvTable![i][2].toString();
-          final calories = _csvTable![i][3].toString();
-          return [name, JapaneseName, calories];
-        }
-        // もしCSVのIDがdoubleとして読み込まれる場合
-        else if (csvId is double && csvId.toInt() == recognitionId) {
-          final name = _csvTable![i][1].toString();
-          final JapaneseName = _csvTable![i][2].toString();
-          final calories = _csvTable![i][3].toString();
-          return [name, JapaneseName, calories];
-        }
+      // 文字列として比較
+      if (csvIdString == recognitionIdString) {
+        final name = _csvTable![i][1].toString();
+        final JapaneseName = _csvTable![i][2].toString();
+        final calories = _csvTable![i][3].toString();
+        return [name, JapaneseName, calories];
       }
-    } catch (e) {
-      // パースエラーなどの例外を捕捉
-      print("Parsing error in getlabelData: $e");
-      setState(() {
-        _errorState = "getlabelData parsing error";
-      });
     }
     setState(() {
-      _errorState = "getlabelData no_id')";
+      _errorState = "getlabelData no_id ,_csvTable!.length= ${_csvTable!.length}' )";
     });
     return ['no_id']; // IDが見つからない場合
   }
