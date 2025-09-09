@@ -97,7 +97,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     print("_makeMealRecord() recordTime=$recordTime");
 
     // 食品名を取得
-    final labelData = getlabelData(_recognitions![0]['label']);
+    final labelData =await getlabelData(_recognitions![0]['label']);
     print("_makeMealRecord() labelData=$labelData");
     if (labelData.length == 3) {
       searchName = labelData[0];
@@ -206,7 +206,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
   }
 
   // IDから名前を取得する関数
-  List<dynamic> getlabelData(String id) {
+  Future<List<dynamic>> getlabelData(String id) async{
     if (_csvTable == null) {
       return ['no_table'];
     }
