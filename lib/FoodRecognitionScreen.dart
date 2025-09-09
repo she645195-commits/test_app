@@ -211,6 +211,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
   // IDから名前を取得する関数
   Future<List<dynamic>> getlabelData(String id) async{
     if (_csvTable == null) {
+      setState(() {
+        _errorState = "getlabelData _csvTable == null)";
+      });
       return ['no_table'];
     }
     for (int i = 1; i < _csvTable!.length; i++) {
@@ -222,6 +225,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
         return [name, JapaneseName, calories];
       }
     }
+    setState(() {
+      _errorState = "getlabelData no_id')";
+    });
     return ['no_id']; // IDが見つからない場合
   }
 
