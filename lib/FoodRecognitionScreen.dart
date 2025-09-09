@@ -70,8 +70,6 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     _loadModelAndProcess();
 
     print("_FoodRecognitionScreenState　initState() End");
-    //_testapi();
-    //_awitMakeMealRecord();
   }
 
   // 'date': '2025/08/15',
@@ -138,7 +136,15 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
         print(
           "_FoodRecognitionScreenState　initState()　_recognitions= $_recognitions",
         );
-        await _makeMealRecord();
+        if (_recognitions != null && _recognitions!.isNotEmpty) {
+          await _makeMealRecord();
+        } else {
+          // 認識結果がなかった場合のエラー処理
+          setState(() {
+            _errorState = "No recognition results found.";
+          });
+          print("No recognition results found.");
+        }
         //String logName = getLabelName(_recognitions![0]['label']);
       } else {
         print("Error: _imagePath is null");
