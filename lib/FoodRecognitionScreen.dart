@@ -216,14 +216,45 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       });
       return ['no_table'];
     }
-    for (int i = 1; i < _csvTable!.length; i++) {
-      // ヘッダーをスキップ
-      if (_csvTable![i][0] == int.parse(id) + 1) {
-        final name = _csvTable![i][1].toString();
-        final JapaneseName = _csvTable![i][2].toString();
-        final calories = _csvTable![i][3].toString();
-        return [name, JapaneseName, calories];
+
+    if (_csvTable == null) {
+      setState(() {
+        _errorState = "getlabelData _csvTable == null)";
+      });
+      return ['no_table'];
+    }
+
+    // デバッグ用ログを追加して、型を確認
+    print("ID from recognition: $id, type: ${id.runtimeType}");
+
+    try {
+      final int recognitionId = int.parse(id) + 1;
+      print("Parsed recognition ID: $recognitionId");
+
+      for (int i = 1; i < _csvTable!.length; i++) {
+        final dynamic csvId = _csvTable![i][0];
+
+        // ここを修正：明示的にintにキャストしてから比較する
+        if (csvId is int && csvId == recognitionId) {
+          final name = _csvTable![i][1].toString();
+          final JapaneseName = _csvTable![i][2].toString();
+          final calories = _csvTable![i][3].toString();
+          return [name, JapaneseName, calories];
+        }
+        // もしCSVのIDがdoubleとして読み込まれる場合
+        else if (csvId is double && csvId.toInt() == recognitionId) {
+          final name = _csvTable![i][1].toString();
+          final JapaneseName = _csvTable![i][2].toString();
+          final calories = _csvTable![i][3].toString();
+          return [name, JapaneseName, calories];
+        }
       }
+    } catch (e) {
+      // パースエラーなどの例外を捕捉
+      print("Parsing error in getlabelData: $e");
+      setState(() {
+        _errorState = "getlabelData parsing error";
+      });
     }
     setState(() {
       _errorState = "getlabelData no_id')";
