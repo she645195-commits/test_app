@@ -29,7 +29,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
   List<String>? _labels;
   List<List<dynamic>>? _csvTable;
 
-  String? _errorState = null;
+  String? _errorState;
 
   // データベースに登録するために必要な情報
   // dbHelper.insertCalories({
@@ -55,6 +55,11 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
   @override
   void initState() {
     super.initState();
+
+    setState(() {
+      _errorState = '_errorStateなし';
+    });
+
     //_imagePath = widget.image.path; // コンストラクタで受け取ったimageのパスにアクセス
     //_loadModelAndProcess(); // モデルロードや処理を開始
     print("_FoodRecognitionScreenState　initState() Start");
@@ -137,11 +142,15 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
         //String logName = getLabelName(_recognitions![0]['label']);
       } else {
         print("Error: _imagePath is null");
-        _errorState = "Error: _imagePath is null";
+        setState(() {
+          _errorState = "Error: _imagePath is null";
+        });
       }
     } catch (e) {
       print("Error in _loadModelAndProcess: $e");
-      _errorState = "_loadModelAndProcess catch";
+      setState(() {
+        _errorState = "_loadModelAndProcess catch";
+      });
     }
   }
 
@@ -157,7 +166,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       print('Model loaded successfully');
     } catch (e) {
       print('Error loading model: $e');
-      _errorState = 'loadModel catch';
+      setState(() {
+        _errorState = 'loadModel catch';
+      });
     }
   }
 
@@ -182,7 +193,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       // print('_labels $_labels');
     } catch (e) {
       print('Error loading labels: $e');
-      _errorState = 'loadLabels catch';
+      setState(() {
+        _errorState = 'loadLabels catch';
+      });
     }
   }
 
@@ -211,7 +224,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
   Future<void> classifyImage(String imagePath) async {
     if (_interpreter == null) {
       print('Interpreter not initialized');
-      _errorState = 'Interpreter not initialized';
+      setState(() {
+        _errorState = 'Interpreter not initialized';
+      });
       return;
     }
 
@@ -220,7 +235,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       img.Image? image = img.decodeImage(File(imagePath).readAsBytesSync());
       if (image == null) {
         print('Failed to decode image');
-        _errorState = 'Failed to decode image';
+        setState(() {
+          _errorState = 'Failed to decode image';
+        });
         return;
       }
 
@@ -299,7 +316,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       print('Classification completed');
     } catch (e) {
       print('Error classifying image: $e');
-      _errorState = 'classifyImage catch';
+      setState(() {
+        _errorState = 'classifyImage catch';
+      });
     }
   }
 
