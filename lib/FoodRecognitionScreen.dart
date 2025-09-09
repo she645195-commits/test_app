@@ -233,6 +233,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
 
       for (int i = 1; i < _csvTable!.length; i++) {
         final dynamic csvId = _csvTable![i][0];
+        print("CSV ID: $csvId, type: ${csvId.runtimeType}");
 
         // ここを修正：明示的にintにキャストしてから比較する
         if (csvId is int && csvId == recognitionId) {
