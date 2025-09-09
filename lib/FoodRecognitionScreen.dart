@@ -83,7 +83,6 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     String? recordTime;
     String? searchName; // APIリクエストに使用
     String? recordName;
-    double? commonVolume;
     String? recordCalorie;
 
     // 現在の日付と時間を取得（例）
@@ -96,6 +95,10 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     print("_makeMealRecord() recordDate=$recordDate");
     print("_makeMealRecord() recordTime=$recordTime");
 
+    var _dbg=_recognitions![0]['label'];
+    setState(() {
+      _errorState = '_recognitions![0][''label''] = $_dbg';
+    });
     // 食品名を取得
     final labelData =await getlabelData(_recognitions![0]['label']);
     print("_makeMealRecord() labelData=$labelData");
