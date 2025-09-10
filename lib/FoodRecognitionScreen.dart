@@ -356,6 +356,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       setState(() {
         _errorState?.add("_labels.length= ${_labels!.length}");
         _errorState?.add("_labels[0]= ${_labels![0]}");
+        _errorState?.add("_csvTable.length= ${_csvTable!.length}");
       });
     }
     setState(() {
