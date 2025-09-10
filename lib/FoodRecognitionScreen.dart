@@ -29,7 +29,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
   List<String>? _labels;
   List<List<dynamic>>? _csvTable;
 
-  String? _errorState;
+  List<String>? _errorState;
 
   // データベースに登録するために必要な情報
   // dbHelper.insertCalories({
@@ -56,8 +56,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
   void initState() {
     super.initState();
 
+    _errorState = [];
     setState(() {
-      _errorState = '_errorStateなし';
+      _errorState?.add('initState Start');
     });
 
     //_imagePath = widget.image.path; // コンストラクタで受け取ったimageのパスにアクセス
@@ -95,12 +96,16 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     print("_makeMealRecord() recordDate=$recordDate");
     print("_makeMealRecord() recordTime=$recordTime");
 
-    var _dbg=_recognitions![0]['label'];
+    var _dbg = _recognitions![0]['label'];
     setState(() {
-      _errorState = '_recognitions![0][''label''] = $_dbg';
+      _errorState?.add(
+        '_recognitions![0]['
+        'label'
+        '] = $_dbg',
+      );
     });
     // 食品名を取得
-    final labelData =await getlabelData(_recognitions![0]['label']);
+    final labelData = await getlabelData(_recognitions![0]['label']);
     print("_makeMealRecord() labelData=$labelData");
     if (labelData.length == 3) {
       searchName = labelData[0];
@@ -144,7 +149,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
         } else {
           // 認識結果がなかった場合のエラー処理
           setState(() {
-            _errorState = "No recognition results found.";
+            _errorState?.add("No recognition results found.");
           });
           print("No recognition results found.");
         }
@@ -152,13 +157,13 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       } else {
         print("Error: _imagePath is null");
         setState(() {
-          _errorState = "Error: _imagePath is null";
+          _errorState?.add("Error: _imagePath is null");
         });
       }
     } catch (e) {
       print("Error in _loadModelAndProcess: $e");
       setState(() {
-        _errorState = "_loadModelAndProcess catch";
+        _errorState?.add("_loadModelAndProcess catch");
       });
     }
   }
@@ -176,7 +181,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     } catch (e) {
       print('Error loading model: $e');
       setState(() {
-        _errorState = 'loadModel catch';
+        _errorState?.add('loadModel catch');
       });
     }
   }
@@ -203,16 +208,16 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     } catch (e) {
       print('Error loading labels: $e');
       setState(() {
-        _errorState = 'loadLabels catch';
+        _errorState?.add('loadLabels catch');
       });
     }
   }
 
   // IDから名前を取得する関数
-  Future<List<dynamic>> getlabelData(String id) async{
+  Future<List<dynamic>> getlabelData(String id) async {
     if (_csvTable == null) {
       setState(() {
-        _errorState = "getlabelData _csvTable == null)";
+        _errorState?.add("getlabelData _csvTable == null)");
       });
       return ['no_table'];
     }
@@ -238,7 +243,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       }
     }
     setState(() {
-      _errorState = "getlabelData no_id ,_csvTable!.length= ${_csvTable!.length}' )";
+      _errorState?.add(
+        "getlabelData no_id ,_csvTable!.length= ${_csvTable!.length}' )",
+      );
     });
     return ['no_id']; // IDが見つからない場合
   }
@@ -252,7 +259,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     if (_interpreter == null) {
       print('Interpreter not initialized');
       setState(() {
-        _errorState = 'Interpreter not initialized';
+        _errorState?.add('Interpreter not initialized');
       });
       return;
     }
@@ -263,7 +270,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       if (image == null) {
         print('Failed to decode image');
         setState(() {
-          _errorState = 'Failed to decode image';
+          _errorState?.add('Failed to decode image');
         });
         return;
       }
@@ -344,7 +351,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     } catch (e) {
       print('Error classifying image: $e');
       setState(() {
-        _errorState = 'classifyImage catch';
+        _errorState?.add('classifyImage catch');
       });
     }
   }
@@ -417,14 +424,17 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
             ),
 
             //　デバッグ用
-            Container(
-              height: 34,
-              child: _errorState != null
-                  ? Text(
-                      _errorState!,
+
+            SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  for (var meal in _errorState!) ...[
+                    Text(
+                      meal,
                       style: TextStyle(color: Colors.red, fontSize: 18),
-                    )
-                  : const SizedBox.shrink(),
+                    ),],
+                ],
+              ),
             ),
           ],
         ),
