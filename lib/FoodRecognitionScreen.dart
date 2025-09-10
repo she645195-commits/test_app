@@ -322,6 +322,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
 
   // IDから名前を取得する関数
   Future<List<dynamic>> getlabelData(String id) async {
+    setState(() {
+      _errorState?.add("getlabelData start");
+    });
     if (_csvTable == null) {
       setState(() {
         _errorState?.add("getlabelData _csvTable == null)");
@@ -329,6 +332,10 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       return ['no_table'];
     }
 
+
+      setState(() {
+        _errorState?.add("getlabelData 1");
+      });
     // デバッグ用ログを追加して、型を確認
     print("ID from recognition: $id, type: ${id.runtimeType}");
 
@@ -336,11 +343,17 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     final String recognitionIdString = (int.parse(id) + 1).toString();
     print("Parsed recognition ID string: $recognitionIdString");
 
+    setState(() {
+      _errorState?.add("getlabelData 2 _csvTable!.length=${_csvTable!.length}");
+    });
     for (int i = 1; i < _csvTable!.length; i++) {
       // CSVから読み込んだIDを文字列に変換し、前後の空白を削除
       final String csvIdString = _csvTable![i][0].toString().trim();
       print("CSV ID string: $csvIdString");
 
+      setState(() {
+        _errorState?.add("getlabelData 3 csvIdString=$csvIdString");
+      });
       // 文字列として比較
       if (csvIdString == recognitionIdString) {
         setState(() {
