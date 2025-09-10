@@ -135,8 +135,18 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
         'assets/aiy_food_V1_labelmap_updated.csv',
       );
       _csvTable = const CsvToListConverter().convert(csvString);
+      if (_csvTable==null){
+        setState(() {
+          _errorState?.add('loadLabels() _csvTable==null');
+        });
+      }
       // 1列目がラベル名なら以下で取得
       _labels = _csvTable!.map((row) => row[0].toString()).toList();
+      if (_labels==null){
+        setState(() {
+          _errorState?.add('loadLabels() _labels==null');
+        });
+      }
       // _csvTableの内容メモ
       // _csvTable[index][0] :食品のID、画像解析と紐づけるためのもの
       // _csvTable[index][1] :食品名（英語）APIにアクセスする際に使用
