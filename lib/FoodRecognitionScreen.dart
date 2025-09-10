@@ -285,7 +285,10 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
 
     var _dbg = _recognitions![0]['label'];
     setState(() {
-      _errorState?.add('_recognitions![0][''label''] = $_dbg',
+      _errorState?.add(
+        '_recognitions![0]['
+        'label'
+        '] = $_dbg',
       );
     });
     // 食品名を取得
@@ -315,8 +318,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     print("_makeMealRecord() mealRecord=");
     print(mealRecord);
     setState(() {
-      _errorState?.add('_makeMealRecord() end',
-      );
+      _errorState?.add('_makeMealRecord() end');
     });
   }
 
@@ -332,10 +334,15 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       return ['no_table'];
     }
 
-
-      setState(() {
-        _errorState?.add("getlabelData 1");
-      });
+    setState(() {
+      _errorState?.add("getlabelData 1");
+      _errorState?.add("id.runtimeType = ${id.runtimeType}");
+      _errorState?.add("id = |${id}|");
+      _errorState?.add(
+        "int.parse(id).runtimeType = |${int.parse(id).runtimeType}|",
+      );
+      _errorState?.add("id = |${(int.parse(id) + 1).toString()}|");
+    });
     // デバッグ用ログを追加して、型を確認
     //print("ID from recognition: $id, type: ${id.runtimeType}");
 
@@ -351,9 +358,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       final String csvIdString = _csvTable![i][0].toString().trim();
       print("CSV ID string: $csvIdString");
 
-      setState(() {
-        _errorState?.add("getlabelData 3 csvIdString=$csvIdString");
-      });
+      // setState(() {
+      //   _errorState?.add("getlabelData 3 csvIdString=$csvIdString");
+      // });
       // 文字列として比較
       if (csvIdString == recognitionIdString) {
         setState(() {
@@ -446,16 +453,19 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
             ),
 
             //　デバッグ用
-            SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  for (var meal in _errorState!) ...[
-                    Text(
-                      meal,
-                      style: TextStyle(color: Colors.red, fontSize: 18),
-                    ),
+            SizedBox(
+              height: 200,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    for (var meal in _errorState!) ...[
+                      Text(
+                        meal,
+                        style: TextStyle(color: Colors.red, fontSize: 18),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ],
