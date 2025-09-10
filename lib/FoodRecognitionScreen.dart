@@ -134,7 +134,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       final csvString = await rootBundle.loadString(
         'assets/aiy_food_V1_labelmap_updated.csv',
       );
-      _csvTable = const CsvToListConverter().convert(csvString);
+      _csvTable = const CsvToListConverter(eol: '\n').convert(csvString);
       if (_csvTable==null){
         setState(() {
           _errorState?.add('loadLabels() _csvTable==null');
