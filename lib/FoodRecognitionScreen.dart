@@ -289,7 +289,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       );
     });
     // 食品名を取得
-    final labelData = await getlabelData((_recognitions![0]['label']).toStoring());
+    final labelData = await getlabelData((_recognitions![0]['label']));
     print("_makeMealRecord() labelData=$labelData");
     if (labelData.length == 3) {
       searchName = labelData[0];
