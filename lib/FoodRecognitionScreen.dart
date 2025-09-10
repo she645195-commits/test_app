@@ -289,7 +289,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       );
     });
     // 食品名を取得
-    final labelData = await getlabelData(_recognitions![0]['label']);
+    final labelData = await getlabelData((_recognitions![0]['label']).toStoring());
     print("_makeMealRecord() labelData=$labelData");
     if (labelData.length == 3) {
       searchName = labelData[0];
@@ -337,7 +337,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
         _errorState?.add("getlabelData 1");
       });
     // デバッグ用ログを追加して、型を確認
-    print("ID from recognition: $id, type: ${id.runtimeType}");
+    //print("ID from recognition: $id, type: ${id.runtimeType}");
 
     // 認識結果のIDとCSVのIDを両方とも文字列として比較する
     final String recognitionIdString = (int.parse(id) + 1).toString();
