@@ -285,10 +285,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
 
     var _dbg = _recognitions![0]['label'];
     setState(() {
-      _errorState?.add(
-        '_recognitions![0]['
-        'label'
-        '] = $_dbg',
+      _errorState?.add('_recognitions![0][''label''] = $_dbg',
       );
     });
     // 食品名を取得
@@ -317,6 +314,10 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     });
     print("_makeMealRecord() mealRecord=");
     print(mealRecord);
+    setState(() {
+      _errorState?.add('_makeMealRecord() end',
+      );
+    });
   }
 
   // IDから名前を取得する関数
@@ -342,6 +343,9 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
 
       // 文字列として比較
       if (csvIdString == recognitionIdString) {
+        setState(() {
+          _errorState?.add("if (csvIdString == recognitionIdString) {");
+        });
         final name = _csvTable![i][1].toString();
         final JapaneseName = _csvTable![i][2].toString();
         final calories = _csvTable![i][3].toString();
