@@ -73,65 +73,6 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     print("_FoodRecognitionScreenState　initState() End");
   }
 
-  // 'date': '2025/08/15',
-  // 'time': '19:40',
-  // 'Name': 'Japanese curry',
-  // 'calories': '500',
-  // 'imagePath': 'assets/meal_image.jpg',
-  Future<void> _makeMealRecord() async {
-    print("_makeMealRecord() Start");
-    String? recordDate;
-    String? recordTime;
-    String? searchName; // APIリクエストに使用
-    String? recordName;
-    String? recordCalorie;
-
-    // 現在の日付と時間を取得（例）
-    final now = DateTime.now();
-    recordDate =
-        '${now.year}/${now.month.toString().padLeft(2, '0')}/${now.day.toString().padLeft(2, '0')}';
-    recordTime =
-        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-
-    print("_makeMealRecord() recordDate=$recordDate");
-    print("_makeMealRecord() recordTime=$recordTime");
-
-    var _dbg = _recognitions![0]['label'];
-    setState(() {
-      _errorState?.add(
-        '_recognitions![0]['
-        'label'
-        '] = $_dbg',
-      );
-    });
-    // 食品名を取得
-    final labelData = await getlabelData(_recognitions![0]['label']);
-    print("_makeMealRecord() labelData=$labelData");
-    if (labelData.length == 3) {
-      searchName = labelData[0];
-      recordName = labelData[1];
-      recordCalorie = labelData[2];
-    } else {
-      // ラベルから食品名を取得できなかった場合、お茶をにごす
-      recordName = '---';
-    }
-    print("_makeMealRecord() recordName=$recordName");
-
-    print("_makeMealRecord() recordCalorie=$recordCalorie");
-
-    setState(() {
-      mealRecord = {};
-      // mealRecordにまとめる
-
-      mealRecord?.putIfAbsent('date', () => recordDate);
-      mealRecord?.putIfAbsent('time', () => recordTime);
-      mealRecord?.putIfAbsent('name', () => recordName);
-      mealRecord?.putIfAbsent('calorie', () => recordCalorie);
-    });
-    print("_makeMealRecord() mealRecord=");
-    print(mealRecord);
-  }
-
   // initState()でawait loadModel()のように呼び出すと
   // Futureを返すように解釈され、エラーが発生する
   // この対策のためロード処理と解析処理をひとまとめのメソッドとする
@@ -211,43 +152,6 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
         _errorState?.add('loadLabels catch');
       });
     }
-  }
-
-  // IDから名前を取得する関数
-  Future<List<dynamic>> getlabelData(String id) async {
-    if (_csvTable == null) {
-      setState(() {
-        _errorState?.add("getlabelData _csvTable == null)");
-      });
-      return ['no_table'];
-    }
-
-    // デバッグ用ログを追加して、型を確認
-    print("ID from recognition: $id, type: ${id.runtimeType}");
-
-    // 認識結果のIDとCSVのIDを両方とも文字列として比較する
-    final String recognitionIdString = (int.parse(id) + 1).toString();
-    print("Parsed recognition ID string: $recognitionIdString");
-
-    for (int i = 1; i < _csvTable!.length; i++) {
-      // CSVから読み込んだIDを文字列に変換し、前後の空白を削除
-      final String csvIdString = _csvTable![i][0].toString().trim();
-      print("CSV ID string: $csvIdString");
-
-      // 文字列として比較
-      if (csvIdString == recognitionIdString) {
-        final name = _csvTable![i][1].toString();
-        final JapaneseName = _csvTable![i][2].toString();
-        final calories = _csvTable![i][3].toString();
-        return [name, JapaneseName, calories];
-      }
-    }
-    setState(() {
-      _errorState?.add(
-        "getlabelData no_id ,_csvTable!.length= ${_csvTable!.length}' )",
-      );
-    });
-    return ['no_id']; // IDが見つからない場合
   }
 
   /// 画像分類（入力サイズ自動・正規化・上位5件）
@@ -356,6 +260,102 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     }
   }
 
+  // 'date': '2025/08/15',
+  // 'time': '19:40',
+  // 'Name': 'Japanese curry',
+  // 'calories': '500',
+  // 'imagePath': 'assets/meal_image.jpg',
+  Future<void> _makeMealRecord() async {
+    print("_makeMealRecord() Start");
+    String? recordDate;
+    String? recordTime;
+    String? searchName; // APIリクエストに使用
+    String? recordName;
+    String? recordCalorie;
+
+    // 現在の日付と時間を取得（例）
+    final now = DateTime.now();
+    recordDate =
+        '${now.year}/${now.month.toString().padLeft(2, '0')}/${now.day.toString().padLeft(2, '0')}';
+    recordTime =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
+    print("_makeMealRecord() recordDate=$recordDate");
+    print("_makeMealRecord() recordTime=$recordTime");
+
+    var _dbg = _recognitions![0]['label'];
+    setState(() {
+      _errorState?.add(
+        '_recognitions![0]['
+        'label'
+        '] = $_dbg',
+      );
+    });
+    // 食品名を取得
+    final labelData = await getlabelData(_recognitions![0]['label']);
+    print("_makeMealRecord() labelData=$labelData");
+    if (labelData.length == 3) {
+      searchName = labelData[0];
+      recordName = labelData[1];
+      recordCalorie = labelData[2];
+    } else {
+      // ラベルから食品名を取得できなかった場合、お茶をにごす
+      recordName = '---';
+    }
+    print("_makeMealRecord() recordName=$recordName");
+
+    print("_makeMealRecord() recordCalorie=$recordCalorie");
+
+    setState(() {
+      mealRecord = {};
+      // mealRecordにまとめる
+
+      mealRecord?.putIfAbsent('date', () => recordDate);
+      mealRecord?.putIfAbsent('time', () => recordTime);
+      mealRecord?.putIfAbsent('name', () => recordName);
+      mealRecord?.putIfAbsent('calorie', () => recordCalorie);
+    });
+    print("_makeMealRecord() mealRecord=");
+    print(mealRecord);
+  }
+
+  // IDから名前を取得する関数
+  Future<List<dynamic>> getlabelData(String id) async {
+    if (_csvTable == null) {
+      setState(() {
+        _errorState?.add("getlabelData _csvTable == null)");
+      });
+      return ['no_table'];
+    }
+
+    // デバッグ用ログを追加して、型を確認
+    print("ID from recognition: $id, type: ${id.runtimeType}");
+
+    // 認識結果のIDとCSVのIDを両方とも文字列として比較する
+    final String recognitionIdString = (int.parse(id) + 1).toString();
+    print("Parsed recognition ID string: $recognitionIdString");
+
+    for (int i = 1; i < _csvTable!.length; i++) {
+      // CSVから読み込んだIDを文字列に変換し、前後の空白を削除
+      final String csvIdString = _csvTable![i][0].toString().trim();
+      print("CSV ID string: $csvIdString");
+
+      // 文字列として比較
+      if (csvIdString == recognitionIdString) {
+        final name = _csvTable![i][1].toString();
+        final JapaneseName = _csvTable![i][2].toString();
+        final calories = _csvTable![i][3].toString();
+        return [name, JapaneseName, calories];
+      }
+    }
+    setState(() {
+      _errorState?.add(
+        "getlabelData no_id ,_csvTable!.length= ${_csvTable!.length}' )",
+      );
+    });
+    return ['no_id']; // IDが見つからない場合
+  }
+
   @override
   void dispose() {
     _interpreter?.close();
@@ -410,21 +410,25 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
                     )
                   : const SizedBox.shrink(),
             ),
+            SizedBox(height: 10),
             Container(
               child: ElevatedButton(
                 onPressed: () {
                   print('ボタンが押されました');
-
                   // ボタンが押されたらデータベースに登録しホーム画面に戻る
                   saveAndReturnToHome();
                 },
-                child: Text("保存"),
-                //child: const Icon(Icons.add, color: Colors.white, size: 40),
+                style: ElevatedButton.styleFrom(
+                  // 背景色
+                  backgroundColor: Colors.blue[400],
+                  // テキスト色（フォアグラウンドカラー）
+                  foregroundColor: Colors.white,
+                ),
+                child: Text("保存", style: TextStyle(fontSize: 18)),
               ),
             ),
 
             //　デバッグ用
-
             SingleChildScrollView(
               child: Column(
                 children: <Widget>[
@@ -432,7 +436,8 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
                     Text(
                       meal,
                       style: TextStyle(color: Colors.red, fontSize: 18),
-                    ),],
+                    ),
+                  ],
                 ],
               ),
             ),
