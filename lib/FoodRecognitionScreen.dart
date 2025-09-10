@@ -139,12 +139,20 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
         setState(() {
           _errorState?.add('loadLabels() _csvTable==null');
         });
+      }else{
+        setState(() {
+          _errorState?.add('loadLabels() _csvTable!=null');
+        });
       }
       // 1列目がラベル名なら以下で取得
       _labels = _csvTable!.map((row) => row[0].toString()).toList();
       if (_labels==null){
         setState(() {
           _errorState?.add('loadLabels() _labels==null');
+        });
+      }else{
+        setState(() {
+          _errorState?.add('loadLabels() _labels!=null');
         });
       }
       // _csvTableの内容メモ
@@ -344,6 +352,11 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       return ['no_table'];
     }
 
+    if(_labels!=null){
+      setState(() {
+        _errorState?.add("_labels.length= ${_labels!.length}");
+      });
+    }
     setState(() {
       _errorState?.add("getlabelData 1");
       _errorState?.add("id.runtimeType = ${id.runtimeType}");
