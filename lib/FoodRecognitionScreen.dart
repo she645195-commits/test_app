@@ -134,23 +134,28 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       final csvString = await rootBundle.loadString(
         'assets/aiy_food_V1_labelmap_updated.csv',
       );
-      _csvTable = const CsvToListConverter(eol: '\n').convert(csvString);
-      if (_csvTable==null){
+
+      // IOSで動いているときは改行コードを正規表現で\r\nから\nに変更する
+      final convertedString = csvString.replaceAll('\r\n', '\n');
+
+      /// ここが正常にテーブルを呼び出してくれない
+      _csvTable = const CsvToListConverter(eol: '\n').convert(convertedString);
+      if (_csvTable == null) {
         setState(() {
           _errorState?.add('loadLabels() _csvTable==null');
         });
-      }else{
+      } else {
         setState(() {
           _errorState?.add('loadLabels() _csvTable!=null');
         });
       }
       // 1列目がラベル名なら以下で取得
       _labels = _csvTable!.map((row) => row[0].toString()).toList();
-      if (_labels==null){
+      if (_labels == null) {
         setState(() {
           _errorState?.add('loadLabels() _labels==null');
         });
-      }else{
+      } else {
         setState(() {
           _errorState?.add('loadLabels() _labels!=null');
         });
@@ -352,7 +357,7 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       return ['no_table'];
     }
 
-    if(_labels!=null){
+    if (_labels != null) {
       setState(() {
         _errorState?.add("_labels.length= ${_labels!.length}");
         _errorState?.add("_labels[0]= ${_labels![0]}");
