@@ -31,26 +31,8 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
 
   List<String>? _errorState;
 
-  // データベースに登録するために必要な情報
-  // dbHelper.insertCalories({
-  //   'date': date,　←登録するタイミングの日付
-  //   'time': time,　←登録するタイミングの時間
-  //   'name': 'Sample Record',　←画像を解析して取得
-  //   'calorie': 500     ←nameから検索する
-  //   'image_path': 'sample/pass/$time',　←保存ボタンを押したときファイルを保存するその場所
-  // });
-
   Map<String, dynamic>? mealRecord;
   final DatabaseHelper dbHelper = DatabaseHelper.instance;
-
-  // 画面確認用ダミーデータ
-  // {
-  // 'date': '2025/08/15',
-  // 'time': '19:40',
-  // 'Name': 'Japanese curry',
-  // 'calories': '500',
-  // 'imagePath': 'assets/meal_image.jpg',
-  // };
 
   @override
   void initState() {
@@ -140,26 +122,10 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
 
       /// ここが正常にテーブルを呼び出してくれない
       _csvTable = const CsvToListConverter(eol: '\n').convert(convertedString);
-      if (_csvTable == null) {
-        setState(() {
-          _errorState?.add('loadLabels() _csvTable==null');
-        });
-      } else {
-        setState(() {
-          _errorState?.add('loadLabels() _csvTable!=null');
-        });
-      }
+
       // 1列目がラベル名なら以下で取得
       _labels = _csvTable!.map((row) => row[0].toString()).toList();
-      if (_labels == null) {
-        setState(() {
-          _errorState?.add('loadLabels() _labels==null');
-        });
-      } else {
-        setState(() {
-          _errorState?.add('loadLabels() _labels!=null');
-        });
-      }
+
       // _csvTableの内容メモ
       // _csvTable[index][0] :食品のID、画像解析と紐づけるためのもの
       // _csvTable[index][1] :食品名（英語）APIにアクセスする際に使用
@@ -185,9 +151,6 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
   Future<void> classifyImage(String imagePath) async {
     if (_interpreter == null) {
       print('Interpreter not initialized');
-      setState(() {
-        _errorState?.add('Interpreter not initialized');
-      });
       return;
     }
 
@@ -196,9 +159,6 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       img.Image? image = img.decodeImage(File(imagePath).readAsBytesSync());
       if (image == null) {
         print('Failed to decode image');
-        setState(() {
-          _errorState?.add('Failed to decode image');
-        });
         return;
       }
 
@@ -283,11 +243,14 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     }
   }
 
-  // 'date': '2025/08/15',
-  // 'time': '19:40',
-  // 'Name': 'Japanese curry',
-  // 'calories': '500',
-  // 'imagePath': 'assets/meal_image.jpg',
+  // データベースに登録するために必要なデータを作成るする
+  // dbHelper.insertCalories({
+  //   'date': date,　←登録するタイミングの日付
+  //   'time': time,　←登録するタイミングの時間
+  //   'name': 'Sample Record',　←画像を解析して取得
+  //   'calorie': 500     ←nameから検索する
+  //   'image_path': 'sample/pass/$time',　←保存ボタンを押したときファイルを保存するその場所
+  // });
   Future<void> _makeMealRecord() async {
     print("_makeMealRecord() Start");
     String? recordDate;
@@ -303,17 +266,6 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
     recordTime =
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
-    print("_makeMealRecord() recordDate=$recordDate");
-    print("_makeMealRecord() recordTime=$recordTime");
-
-    var _dbg = _recognitions![0]['label'];
-    setState(() {
-      _errorState?.add(
-        '_recognitions![0]['
-        'label'
-        '] = $_dbg',
-      );
-    });
     // 食品名を取得
     final labelData = await getlabelData((_recognitions![0]['label']));
     print("_makeMealRecord() labelData=$labelData");
@@ -326,7 +278,6 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       recordName = '---';
     }
     print("_makeMealRecord() recordName=$recordName");
-
     print("_makeMealRecord() recordCalorie=$recordCalorie");
 
     setState(() {
@@ -351,51 +302,18 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
       _errorState?.add("getlabelData start");
     });
     if (_csvTable == null) {
-      setState(() {
-        _errorState?.add("getlabelData _csvTable == null)");
-      });
       return ['no_table'];
     }
 
-    if (_labels != null) {
-      setState(() {
-        _errorState?.add("_labels.length= ${_labels!.length}");
-        _errorState?.add("_labels[0]= ${_labels![0]}");
-        _errorState?.add("_csvTable.length= ${_csvTable!.length}");
-      });
-    }
-    setState(() {
-      _errorState?.add("getlabelData 1");
-      _errorState?.add("id.runtimeType = ${id.runtimeType}");
-      _errorState?.add("id = |${id}|");
-      _errorState?.add(
-        "int.parse(id).runtimeType = |${int.parse(id).runtimeType}|",
-      );
-      _errorState?.add("id = |${(int.parse(id) + 1).toString()}|");
-    });
-    // デバッグ用ログを追加して、型を確認
-    //print("ID from recognition: $id, type: ${id.runtimeType}");
-
     // 認識結果のIDとCSVのIDを両方とも文字列として比較する
     final String recognitionIdString = (int.parse(id) + 1).toString();
-    print("Parsed recognition ID string: $recognitionIdString");
 
-    setState(() {
-      _errorState?.add("getlabelData 2 _csvTable!.length=${_csvTable!.length}");
-    });
     for (int i = 1; i < _csvTable!.length; i++) {
       // CSVから読み込んだIDを文字列に変換し、前後の空白を削除
       final String csvIdString = _csvTable![i][0].toString().trim();
-      print("CSV ID string: $csvIdString");
 
-      // setState(() {
-      //   _errorState?.add("getlabelData 3 csvIdString=$csvIdString");
-      // });
       // 文字列として比較
       if (csvIdString == recognitionIdString) {
-        setState(() {
-          _errorState?.add("if (csvIdString == recognitionIdString) {");
-        });
         final name = _csvTable![i][1].toString();
         final JapaneseName = _csvTable![i][2].toString();
         final calories = _csvTable![i][3].toString();
@@ -483,21 +401,21 @@ class _FoodRecognitionScreenState extends State<FoodRecognitionScreen> {
             ),
 
             //　デバッグ用
-            SizedBox(
-              height: 200,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    for (var meal in _errorState!) ...[
-                      Text(
-                        meal,
-                        style: TextStyle(color: Colors.red, fontSize: 18),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
+            // SizedBox(
+            //   height: 200,
+            //   child: SingleChildScrollView(
+            //     child: Column(
+            //       children: <Widget>[
+            //         for (var meal in _errorState!) ...[
+            //           Text(
+            //             meal,
+            //             style: TextStyle(color: Colors.red, fontSize: 18),
+            //           ),
+            //         ],
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

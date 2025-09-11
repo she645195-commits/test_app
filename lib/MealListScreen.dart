@@ -157,6 +157,7 @@ class _MealListScreenState extends State<MealListScreen> {
                                 SizedBox(height: 1),
                                 for (var record in meal['records']) ...[
                                   buildRecordContainer(record, size.width),
+                                  SizedBox(height: 1),
                                 ],
                               ],
                             ],
